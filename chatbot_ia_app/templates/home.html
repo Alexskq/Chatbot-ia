@@ -1,0 +1,74 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h1 class="display-4">Bienvenue sur ChatBot IA</h1>
+      <p class="lead">
+        Une plateforme intelligente pour interagir avec des chatbots IA
+      </p>
+    </div>
+  </div>
+
+  <div class="row mt-5 justify-content-center">
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title">Simulations</h3>
+          <p class="card-text">
+            Commencer une simulations personnalisées pour tester différents
+            scénarios.
+          </p>
+          {% if user.is_authenticated %}
+          <a
+            href="{% url 'simulations:create_simulation' %}"
+            class="btn btn-primary"
+            >Créer une simulation</a
+          >
+          {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary"
+            >Se connecter pour commencer</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title">Analytiques</h3>
+          <p class="card-text">
+            Analysez les performances de vos chatbots et obtenez des insights
+            précieux.
+          </p>
+          {% if user.is_authenticated %}
+          <a href="#" class="btn btn-primary">Voir les analytiques</a>
+          {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary"
+            >Se connecter pour commencer</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if not user.is_authenticated %}
+  <div class="row mt-5">
+    <div class="col-md-6 offset-md-3 text-center">
+      <div class="card">
+        <div class="card-body">
+          <h3>Pas encore inscrit ?</h3>
+          <p>
+            Créez un compte gratuitement pour accéder à toutes les
+            fonctionnalités.
+          </p>
+          <a href="{% url 'register' %}" class="btn btn-success"
+            >S'inscrire maintenant</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
