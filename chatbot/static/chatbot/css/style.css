@@ -1,0 +1,92 @@
+/* Styles généraux */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Styles de la carte */
+.card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 10px;
+  height: 80vh; /* Hauteur fixe de 80% de la hauteur de la fenêtre */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 10px 10px 0 0 !important;
+  flex-shrink: 0; /* Empêche le header de rétrécir */
+}
+
+.card-body {
+  flex: 1; /* Prend tout l'espace disponible */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Empêche le débordement du card-body */
+}
+
+/* Styles des messages */
+.chat-messages {
+  height: 80vh;
+  flex: 1;
+  overflow-y: auto; /* Scroll uniquement sur la zone de messages */
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Aligne les messages en haut */
+}
+
+.message {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.message-content {
+  padding: 12px 16px;
+  border-radius: 15px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.message-content.bg-light {
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
+}
+
+.message-content.bg-primary {
+  background-color: #007bff !important;
+  border: none;
+}
+
+/* Style de l'input */
+.chat-input {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  flex-shrink: 0; /* Empêche l'input de rétrécir */
+}
+
+.form-control {
+  border-radius: 20px;
+  padding: 10px 20px;
+  border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #80bdff;
+}
+
+.btn-primary {
+  border-radius: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
