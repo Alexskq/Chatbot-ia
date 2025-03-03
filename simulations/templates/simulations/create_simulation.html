@@ -6,7 +6,13 @@
     {% csrf_token %}
     <div class="form-group mb-3">
       <label for="scenario">Scénario</label>
-      <select class="form-control" id="scenario" name="scenario" required>
+      <select
+        class="form-control"
+        id="scenario"
+        name="scenario"
+        required
+        style="word-wrap: unset"
+      >
         <option value="" selected disabled>Choisissez un scénario</option>
         {% for value, label in scenario_choices %}
         <option value="{{ value }}">{{ label }}</option>

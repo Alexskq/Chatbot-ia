@@ -1,0 +1,121 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h3>Discussion - {{ simulation.get_scenario_display }}</h3>
+    </div>
+    <div class="card-body">
+      <div
+        class="chat-messages"
+        style="height: 400px; overflow-y: auto"
+        id="chat-messages"
+      >
+        {% for message in chat_messages %}
+        <div
+          class="message mb-3 {% if message.sender == 'bot' %}text-start{% else %}text-end{% endif %}"
+        >
+          <div
+            class="message-content {% if message.sender == 'bot' %}bg-light{% else %}bg-primary text-white{% endif %}"
+            style="
+              display: inline-block;
+              padding: 10px;
+              border-radius: 10px;
+              max-width: 70%;
+            "
+          >
+            {{ message.content }}
+          </div>
+          <small class="text-muted d-block"
+            >{{ message.timestamp|time:"H:i" }}</small
+          >
+        </div>
+        {% endfor %}
+      </div>
+      <div class="chat-input mt-3">
+        <form method="POST" id="chat-form">
+          {% csrf_token %}
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              name="message"
+              id="message-input"
+              placeholder="Tapez votre message..."
+              required
+            />
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const chatMessages = document.getElementById("chat-messages");
+    const chatForm = document.getElementById("chat-form");
+    const messageInput = document.getElementById("message-input");
+
+    // Faire défiler jusqu'aux derniers messages
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    chatForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(chatForm);
+      const userMessage = formData.get("message");
+
+      // Ajouter immédiatement le message de l'utilisateur
+      appendMessage(userMessage, "user");
+      messageInput.value = "";
+
+      // Envoyer le message au serveur
+      fetch(window.location.href, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            appendMessage(data.bot_response, "bot");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+          appendMessage("Désolé, une erreur est survenue.", "bot");
+        });
+    });
+
+    function appendMessage(content, sender) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `message mb-3 ${
+        sender === "bot" ? "text-start" : "text-end"
+      }`;
+
+      const time = new Date().toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      messageDiv.innerHTML = `
+            <div class="message-content ${
+              sender === "bot" ? "bg-light" : "bg-primary text-white"
+            }" 
+                 style="display: inline-block; padding: 10px; border-radius: 10px; max-width: 70%;">
+                ${content}
+            </div>
+            <small class="text-muted d-block">${time}</small>
+        `;
+
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  });
+</script>
+{% endblock %}

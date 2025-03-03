@@ -19,7 +19,7 @@ def create_simulation(request):
         simulation.save()
         
         messages.success(request, 'Simulation créée avec succès!')
-        return redirect('home')  # Rediriger vers la page d'accueil ou une autre page
+        return redirect('chatbot:chat', simulation_id=simulation.id)
     
     # Passer les choix de scénarios au template
     context = {

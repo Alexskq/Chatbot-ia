@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('chatbot_ia_app.urls')),
     path('simulations/', include('simulations.urls', namespace='simulations')),
+    path('chat/', include('chatbot.urls', namespace='chatbot')),
 ]
