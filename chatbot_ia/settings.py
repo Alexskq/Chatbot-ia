@@ -27,6 +27,19 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+        },
+    },
+    'loggers': {
+        'chatbot.consumers': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.channels': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
         },
     },
     'root': {
@@ -64,6 +77,7 @@ INSTALLED_APPS = [
     'simulations',
     'analytics',
     'chatbot',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -158,3 +172,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+# Configuration Channels
+ASGI_APPLICATION = 'chatbot_ia.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

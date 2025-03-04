@@ -1,15 +1,14 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from simulations.models import Simulation
-from .models import Message
-from .services import ChatbotService
 from django.http import JsonResponse
+from .models import Message, Simulation
+from .services import ChatbotService
 
 # Create your views here.
 
 @login_required
 def chat_view(request, simulation_id):
-    simulation = get_object_or_404(Simulation, pk=simulation_id, user=request.user)
+    simulation = get_object_or_404(Simulation, id=simulation_id)
     
     if request.method == 'POST':
         user_message = request.POST.get('message', '').strip()
@@ -39,9 +38,13 @@ def chat_view(request, simulation_id):
                 })
     
     # Récupérer tous les messages de la conversation
-    messages = Message.objects.filter(simulation=simulation)
-    context = {
+    chat_messages = Message.objects.filter(simulation=simulation).order_by('timestamp')
+    
+    return render(request, 'chatbot/chat.html', {
         'simulation': simulation,
-        'chat_messages': messages  # Renommé pour éviter le conflit avec les messages Django
-    }
-    return render(request, 'chatbot/chat.html', context)
+        'chat_messages': chat_messages,
+    })
+
+def websocket_test_view(request):
+    """Vue simple pour tester les WebSockets"""
+    return render(request, 'chatbot/websocket_test.html')

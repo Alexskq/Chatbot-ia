@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test WebSocket</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .user {
+            background-color: #e6f7ff;
+            text-align: right;
+        }
+        .bot {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        .system {
+            background-color: #ffe6e6;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test WebSocket</h1>
+    <div id="messages"></div>
+    <div>
+        <input type="text" id="message-input" placeholder="Tapez votre message...">
+        <button id="send-button">Envoyer</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.getElementById('messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            
+            // Ajouter un message au div
+            function addMessage(content, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = content;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+            
+            // Ajouter un message système
+            addMessage('Initialisation...', 'system');
+            
+            // Vérifier si les WebSockets sont supportés
+            if (!window.WebSocket) {
+                addMessage('WebSockets non supportés par ce navigateur!', 'system');
+                return;
+            }
+            
+            addMessage('WebSockets supportés par ce navigateur', 'system');
+            
+            // Créer la connexion WebSocket
+            const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            const wsUrl = `${wsScheme}://${window.location.host}/ws/chat/test/`;
+            
+            addMessage(`Tentative de connexion à ${wsUrl}`, 'system');
+            
+            try {
+                const socket = new WebSocket(wsUrl);
+                
+                socket.onopen = function(e) {
+                    addMessage('Connexion WebSocket établie!', 'system');
+                };
+                
+                socket.onmessage = function(e) {
+                    try {
+                        const data = JSON.parse(e.data);
+                        addMessage(`${data.message} (${data.timestamp})`, data.sender);
+                    } catch (error) {
+                        addMessage(`Erreur de parsing: ${e.data}`, 'system');
+                    }
+                };
+                
+                socket.onclose = function(e) {
+                    addMessage(`Connexion fermée (code: ${e.code}, raison: ${e.reason || 'non spécifiée'})`, 'system');
+                };
+                
+                socket.onerror = function(e) {
+                    addMessage('Erreur WebSocket', 'system');
+                    console.error('Erreur WebSocket:', e);
+                };
+                
+                // Gérer l'envoi de messages
+                sendButton.addEventListener('click', function() {
+                    const message = messageInput.value.trim();
+                    if (message) {
+                        try {
+                            socket.send(JSON.stringify({
+                                'message': message
+                            }));
+                            messageInput.value = '';
+                        } catch (error) {
+                            addMessage(`Erreur d'envoi: ${error.message}`, 'system');
+                        }
+                    }
+                });
+                
+                messageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendButton.click();
+                    }
+                });
+                
+            } catch (error) {
+                addMessage(`Erreur d'initialisation: ${error.message}`, 'system');
+            }
+        });
+    </script>
+</body>
+</html> 

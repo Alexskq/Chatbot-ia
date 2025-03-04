@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %} {% load static %}
 <link rel="stylesheet" href="{% static 'chatbot/css/style.css' %}" />
 <div class="container mt-4">
-  <div class="card">
+  <div class="card" data-simulation-id="{{ simulation.id }}">
     <div class="card-header">
       <h3>Discussion - {{ simulation.get_scenario_display }}</h3>
     </div>
